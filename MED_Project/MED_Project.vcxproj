@@ -129,9 +129,11 @@
   <ItemGroup>
     <ClCompile Include="MED_Project.cpp" />
     <ClCompile Include="NBC.cpp" />
+    <ClCompile Include="Point.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NBC.h" />
+    <ClInclude Include="Point.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

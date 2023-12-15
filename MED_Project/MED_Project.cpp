@@ -7,7 +7,7 @@
 
 int main()
 {
-    NBC nbc("data/my_dataset.txt");
+    NBC nbc("data/my_dataset.txt", 3);
     //std::cout << "Hello World!\n";
     nbc.getPoints();
 }
