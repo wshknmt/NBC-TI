@@ -105,7 +105,7 @@ int Point::getNeighborsSize() {
 }
 
 void Point::print() {
-	std::cout << "index: " << index << " , x: " << x << " , y: " << y << " , distance: " << distance <<" , label: "<<label << std::endl;
+	std::cout << "index: " << index << " , x: " << x << " , y: " << y << " , distance: " << distance <<" , label: "<<label << " ndf: "<<ndf <<std::endl;
 	std::cout << "neigbours of point are: ";
 	for (int j = 0; j < neighbors.size(); j++) {
 		std::cout << neighbors[j].index << " , ";

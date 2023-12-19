@@ -6,74 +6,9 @@ NBC::NBC(std::string path, int k) {
     countDistance();
     sortPoints();
     setIndex();
-    
-    for (int i = 0; i < points.size(); i++) {
-        findNeighbors(i);
-        points[i].countEpsilon();
-        while (points[i].getMinChecked() - 1 >= 0) {
-            double estimatedDist = abs(points[i].getDistance() - getPointDist(points[i].getMinChecked() - 1));
-            if (estimatedDist < points[i].getEpsilon()) {
-                Neighbor n;
-                n.index = points[i].getMinChecked() - 1;
-                n.realDistance = countRealDistanceToPoint(i, n.index);
-                points[i].replaceNeighbor(n);
-                points[i].decrementMinChecked();
-                points[i].countEpsilon();
-            }
-            else {
-                break;
-            }
-        }
-        while (points[i].getMaxChecked() + 1 < points.size()) {
-            double estimatedDist = abs(points[i].getDistance() - getPointDist(points[i].getMaxChecked() + 1));
-            if (estimatedDist < points[i].getEpsilon()) {
-                Neighbor n;
-                n.index = points[i].getMaxChecked() + 1;
-                n.realDistance = countRealDistanceToPoint(i, n.index);
-                points[i].replaceNeighbor(n);
-                points[i].incrementMaxChecked();
-                points[i].countEpsilon();
-            }
-            else {
-                break;
-            }
-        }
-    }
-    
-
-    for (int i = 0; i < points.size(); i++) {
-        countReverseNeighbors(i);
-        points[i].countNdf();
-    }
-    int groupIndex = 0;
-    for (int i = 0; i < points.size(); i++) {
-        if (points[i].getLabel() != 0) continue;
-        if (points[i].getNdf() < 1) {
-            points[i].setLabel(-1);
-            continue;
-        }
-        else {
-            groupIndex++;
-            seeds.push_back(i);
-            while (!seeds.empty()) {
-                points[seeds[0]].setLabel(groupIndex);
-                for (int j = 0; j < points[seeds[0]].getNeighborsSize(); j++) {
-                    int neighborIdx = points[seeds[0]].getNeighbor(j).index;
-                    if (points[neighborIdx].getLabel() <= 0) {
-                        points[neighborIdx].setLabel(groupIndex);
-                        if (points[neighborIdx].getNdf() >= 1) {
-                            seeds.push_back(neighborIdx);
-                        }
-                    }
-                }
-                seeds.pop_front();
-            }
-            
-        }
-        
-    }
-    
-    
+    findNeighbors();
+    countNdf();
+    putLabelsOn();
 }
 
 void NBC::openDataset(std::string path) {
@@ -128,7 +63,42 @@ void NBC::setIndex() {
     }
 }
 
-void NBC::findNeighbors(int point) {
+void NBC::findNeighbors() {
+    for (int i = 0; i < points.size(); i++) {
+        findNeighborsOfPoint(i);
+        points[i].countEpsilon();
+        while (points[i].getMinChecked() - 1 >= 0) {
+            double estimatedDist = abs(points[i].getDistance() - points[points[i].getMinChecked() - 1].getDistance());
+            if (estimatedDist < points[i].getEpsilon()) {
+                Neighbor n;
+                n.index = points[i].getMinChecked() - 1;
+                n.realDistance = countRealDistanceToPoint(i, n.index);
+                points[i].replaceNeighbor(n);
+                points[i].decrementMinChecked();
+                points[i].countEpsilon();
+            }
+            else {
+                break;
+            }
+        }
+        while (points[i].getMaxChecked() + 1 < points.size()) {
+            double estimatedDist = abs(points[i].getDistance() - points[points[i].getMaxChecked() + 1].getDistance());
+            if (estimatedDist < points[i].getEpsilon()) {
+                Neighbor n;
+                n.index = points[i].getMaxChecked() + 1;
+                n.realDistance = countRealDistanceToPoint(i, n.index);
+                points[i].replaceNeighbor(n);
+                points[i].incrementMaxChecked();
+                points[i].countEpsilon();
+            }
+            else {
+                break;
+            }
+        }
+    }
+}
+
+void NBC::findNeighborsOfPoint(int point) {
     points[point].setMaxChecked(point);
     points[point].setMinChecked(point);
     
@@ -152,6 +122,41 @@ void NBC::findNeighbors(int point) {
     }
 }
 
+void NBC::countNdf() {
+    for (int i = 0; i < points.size(); i++) {
+        countReverseNeighbors(i);
+        points[i].countNdf();
+    }
+}
+
+void NBC::putLabelsOn() {
+    groupIndex = 0;
+    for (int i = 0; i < points.size(); i++) {
+        if (points[i].getLabel() != 0) continue;
+        if (points[i].getNdf() < 1) {
+            points[i].setLabel(-1);
+            continue;
+        }
+        else {
+            groupIndex++;
+            seeds.push_back(i);
+            while (!seeds.empty()) {
+                points[seeds[0]].setLabel(groupIndex);
+                for (int j = 0; j < points[seeds[0]].getNeighborsSize(); j++) {
+                    int neighborIdx = points[seeds[0]].getNeighbor(j).index;
+                    if (points[neighborIdx].getLabel() <= 0) {
+                        points[neighborIdx].setLabel(groupIndex);
+                        if (points[neighborIdx].getNdf() >= 1) {
+                            seeds.push_back(neighborIdx);
+                        }
+                    }
+                }
+                seeds.pop_front();
+            }
+        }
+    }
+}
+
 double NBC::getDistanceNextPoint(int point) {
     if (point < points.size())
         return points[point].getDistance();
@@ -167,24 +172,7 @@ double NBC::getDistancePrevPoint(int point) {
 }
 
 double NBC::countRealDistanceToPoint(int point, int neigh) {
-    double px = points[point].getX();
-    double py = points[point].getY();
-    double nx = points[neigh].getX();
-    double ny = points[neigh].getY();
-    return distanceOfTwoPoints(px, py, nx, ny);
-    //return distanceOfTwoPoints(points[point].getX(), points[point].getY(), getPointX(points[point].getNeighbor(neigh).index), getPointY(points[point].getNeighbor(neigh).index));
-}
-
-double NBC::getPointX(int point) {
-    return points[point].getX();
-}
-
-double NBC::getPointY(int point) {
-    return points[point].getY();
-}
-
-double NBC::getPointDist(int point) {
-    return points[point].getDistance();
+    return distanceOfTwoPoints(points[point].getX(), points[point].getY(), points[neigh].getX(), points[neigh].getY());
 }
 
 void NBC::countReverseNeighbors(int point) {
@@ -195,4 +183,8 @@ void NBC::countReverseNeighbors(int point) {
 
 void NBC::incrementReverseCounter(int point) {
     points[point].incrementReverseCounter();
+}
+
+void NBC::printMaxLabel() {
+    std::cout << "maxIndex: " << groupIndex << std::endl;
 }

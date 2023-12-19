@@ -2,11 +2,7 @@
 #define POINT_H
 
 #include <iostream>
-#include <string>
 #include <vector>
-#include <fstream>
-#include <sstream>
-#include <cmath>
 #include <algorithm>
 
 struct Neighbor {
