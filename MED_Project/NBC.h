@@ -1,29 +1,8 @@
 #ifndef NBC_H
 #define NBC_H
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <cmath>
-#include <algorithm>
-
-struct Point {
-	int index;
-	double x;
-	double y;
-	double distance;
-	double epsilon;
-	int label;
-	int minChecked;
-	int maxChecked;
-	std::vector <int> neighbors;
-
-	bool operator<(const Point& other) const {
-		return distance < other.distance;
-	}
-};
+#include "Point.h"
+#include <deque>
 
 class NBC
 {
@@ -38,15 +17,18 @@ public:
 	void findNeighbors(int point);
 	double getDistanceNextPoint(int point);
 	double getDistancePrevPoint(int point);
-	void countEpsilon(int point);
 	double countRealDistanceToPoint(int point, int neigh);
 	double getPointX(int point);
 	double getPointY(int point);
+	double getPointDist(int point);
+	void countReverseNeighbors(int point);
+	void incrementReverseCounter(int point);
 private:
 	double minX = std::numeric_limits<double>::max(); 
 	double minY = std::numeric_limits<double>::max();
 	std::vector <Point> points;
-	//std::vector <std::vector<int> > fields;
+	std::deque <int> seeds;
+	//std::vector <int> allSeeds;
 	int k;
 };
 
