@@ -71,12 +71,18 @@ void NBC::findNeighbors() {
         while (points[i].getMinChecked() - 1 >= 0) {
             double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMinChecked() - 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {
-                Neighbor n;
-                n.index = points[i].getMinChecked() - 1;
-                n.realDistance = countRealDistanceToPoint(i, n.index);
-                points[i].replaceNeighbor(n);
-                points[i].decrementMinChecked();
-                points[i].countEpsilon();
+                double realDistance = countRealDistanceToPoint(i, points[i].getMinChecked() - 1);
+                if (realDistance < points[i].getEpsilon()) {
+                    Neighbor n;
+                    n.index = points[i].getMinChecked() - 1;
+                    n.realDistance = realDistance;
+                    points[i].replaceNeighbor(n);
+                    points[i].decrementMinChecked();
+                    points[i].countEpsilon();
+                } else {
+                    points[i].decrementMinChecked();
+                    continue;
+                }
             }
             else {
                 break;
@@ -85,12 +91,18 @@ void NBC::findNeighbors() {
         while (points[i].getMaxChecked() + 1 < points.size()) {
             double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMaxChecked() + 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {
-                Neighbor n;
-                n.index = points[i].getMaxChecked() + 1;
-                n.realDistance = countRealDistanceToPoint(i, n.index);
-                points[i].replaceNeighbor(n);
-                points[i].incrementMaxChecked();
-                points[i].countEpsilon();
+                double realDistance = countRealDistanceToPoint(i, points[i].getMaxChecked() + 1);
+                if (realDistance < points[i].getEpsilon()) {
+                    Neighbor n;
+                    n.index = points[i].getMaxChecked() + 1;
+                    n.realDistance = realDistance;
+                    points[i].replaceNeighbor(n);
+                    points[i].incrementMaxChecked();
+                    points[i].countEpsilon();
+                } else {
+                    points[i].incrementMaxChecked();
+                    continue;
+                }
             }
             else {
                 break;
@@ -132,7 +144,7 @@ void NBC::countNdf() {
 
 void NBC::putLabelsOn() {
     groupIndex = 0;
-    double minNdf = 0.9;
+    double minNdf = 0.5;
     for (int i = 0; i < points.size(); i++) {
         if (points[i].getLabel() != 0) continue;
         if (points[i].getNdf() < minNdf) {

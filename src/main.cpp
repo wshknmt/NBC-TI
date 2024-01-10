@@ -9,9 +9,9 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     const int windowHeight = 900;
     MainWindow mainWindow;
-    std::string dataSet = "my2.txt";
+    std::string dataSet = "banana.txt";
     std::string path = "C:\\Users\\pawel\\Desktop\\medVSCODE 3\\MED\\data\\";
-    char delimiter = ',';
+    char delimiter = ':';
 
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::cout << "Current directory: " << currentPath << std::endl;
