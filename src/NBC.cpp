@@ -1,8 +1,8 @@
 #include "NBC.h"
 
-NBC::NBC(std::string path, int k) {
+NBC::NBC(std::string path, char delimiter, int k) {
     this->k = k;
-    openDataset(path);
+    openDataset(path, delimiter);
     countDistance();
     sortPoints();
     setIndex();
@@ -11,23 +11,24 @@ NBC::NBC(std::string path, int k) {
     putLabelsOn();
 }
 
-void NBC::openDataset(std::string path) {
-	std::ifstream file(path);
+void NBC::openDataset(std::string path, char delimiter) {
+    std::ifstream file(path);
     if (file.is_open()) {
         std::string line;
-        int index = 0;
 
         while (getline(file, line)) {
             std::cout << line << std::endl;
             std::istringstream issLine(line);
             std::string x, y;
-            std::getline(issLine, x, ':');
-            std::getline(issLine, y, ':');
+            std::getline(issLine, x, delimiter);
+            std::getline(issLine, y, delimiter);
             Point point;
             point.setX(stod(x));
             point.setY(stod(y));
             if (point.getX() < minX) minX = point.getX();
             if (point.getY() < minY) minY = point.getY();
+            if (point.getX() > maxX) maxX = point.getX();
+            if (point.getY() > maxY) maxY = point.getY();
             points.push_back(point);
         }
         file.close();
@@ -37,7 +38,7 @@ void NBC::openDataset(std::string path) {
     }
 }
 
-void NBC::getPoints() {
+void NBC::printPoints() {
     for (int i = 0; i < points.size(); i++) {
         points[i].print();
     }
@@ -68,7 +69,7 @@ void NBC::findNeighbors() {
         findNeighborsOfPoint(i);
         points[i].countEpsilon();
         while (points[i].getMinChecked() - 1 >= 0) {
-            double estimatedDist = abs(points[i].getDistance() - points[points[i].getMinChecked() - 1].getDistance());
+            double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMinChecked() - 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {
                 Neighbor n;
                 n.index = points[i].getMinChecked() - 1;
@@ -82,7 +83,7 @@ void NBC::findNeighbors() {
             }
         }
         while (points[i].getMaxChecked() + 1 < points.size()) {
-            double estimatedDist = abs(points[i].getDistance() - points[points[i].getMaxChecked() + 1].getDistance());
+            double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMaxChecked() + 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {
                 Neighbor n;
                 n.index = points[i].getMaxChecked() + 1;
@@ -101,7 +102,7 @@ void NBC::findNeighbors() {
 void NBC::findNeighborsOfPoint(int point) {
     points[point].setMaxChecked(point);
     points[point].setMinChecked(point);
-    
+
     for (int i = 0; i < k; i++) {
         double dist1 = getDistanceNextPoint(points[point].getMaxChecked() + 1);
         double dist2 = getDistancePrevPoint(points[point].getMinChecked() - 1);
@@ -131,9 +132,10 @@ void NBC::countNdf() {
 
 void NBC::putLabelsOn() {
     groupIndex = 0;
+    double minNdf = 0.9;
     for (int i = 0; i < points.size(); i++) {
         if (points[i].getLabel() != 0) continue;
-        if (points[i].getNdf() < 1) {
+        if (points[i].getNdf() < minNdf) {
             points[i].setLabel(-1);
             continue;
         }
@@ -146,7 +148,7 @@ void NBC::putLabelsOn() {
                     int neighborIdx = points[seeds[0]].getNeighbor(j).index;
                     if (points[neighborIdx].getLabel() <= 0) {
                         points[neighborIdx].setLabel(groupIndex);
-                        if (points[neighborIdx].getNdf() >= 1) {
+                        if (points[neighborIdx].getNdf() >= minNdf) {
                             seeds.push_back(neighborIdx);
                         }
                     }
@@ -187,4 +189,22 @@ void NBC::incrementReverseCounter(int point) {
 
 void NBC::printMaxLabel() {
     std::cout << "maxIndex: " << groupIndex << std::endl;
+}
+std::vector <Point> NBC::getPoints() {
+    return points;
+}
+int NBC::getGroupIndex() {
+    return groupIndex;
+}
+double NBC::getMinX() {
+    return minX;
+}
+double NBC::getMinY() {
+    return minY;
+}
+double NBC::getMaxX() {
+    return maxX;
+}
+double NBC::getMaxY() {
+    return maxY;
 }
