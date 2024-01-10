@@ -199,9 +199,6 @@ void NBC::incrementReverseCounter(int point) {
     points[point].incrementReverseCounter();
 }
 
-void NBC::printMaxLabel() {
-    std::cout << "maxIndex: " << groupIndex << std::endl;
-}
 std::vector <Point> NBC::getPoints() {
     return points;
 }

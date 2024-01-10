@@ -24,10 +24,6 @@ double Point::getDistance() {
     return distance;
 }
 
-void Point::setEpsilon(double eps) {
-    this->epsilon = eps;
-}
-
 double Point::getEpsilon() {
     return epsilon;
 }
@@ -44,10 +40,6 @@ void Point::setIndex(int index) {
     this->index = index;
 }
 
-int Point::getIndex() {
-    return index;
-}
-
 void Point::setMinChecked(int value) {
     minChecked = value;
 }
@@ -62,14 +54,6 @@ void Point::setMaxChecked(int value) {
 
 int Point::getMaxChecked() {
     return maxChecked;
-}
-
-int Point::getReverseCounter() {
-    return reverseCounter;
-}
-
-void Point::setNdf(double ndf) {
-    this->ndf = ndf;
 }
 
 double Point::getNdf() {
@@ -94,10 +78,6 @@ Neighbor Point::getNeighbor(int idx) {
 
 void Point::addNeighbor(Neighbor neigh) {
     neighbors.push_back(neigh);
-}
-
-std::vector<Neighbor> Point::getNeighbors() {
-    return neighbors;
 }
 
 int Point::getNeighborsSize() {

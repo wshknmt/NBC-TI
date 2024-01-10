@@ -27,7 +27,6 @@ public:
     double countRealDistanceToPoint(int point, int neigh);
     void countReverseNeighbors(int point);
     void incrementReverseCounter(int point);
-    void printMaxLabel();
     std::vector <Point> getPoints();
     int getGroupIndex();
     double getMinX();

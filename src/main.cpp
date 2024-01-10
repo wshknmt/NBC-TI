@@ -1,22 +1,15 @@
 #include <QApplication>
-#include <QPainter>
-#include <QWidget>
 #include "MainWindow.h"
-#include <filesystem>
-
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     const int windowHeight = 900;
     MainWindow mainWindow;
-    std::string dataSet = "banana.txt";
+    
+    std::string dataSet = "zelnik5.txt";
     std::string path = "C:\\Users\\pawel\\Desktop\\medVSCODE 3\\MED\\data\\";
-    char delimiter = ':';
 
-    std::filesystem::path currentPath = std::filesystem::current_path();
-    std::cout << "Current directory: " << currentPath << std::endl;
-
-    mainWindow.startAlghoritm(path + dataSet, delimiter, 50);
+    mainWindow.startAlghoritm(path + dataSet, ',', 30);
     mainWindow.setFixedSize(1500, windowHeight);
     QString dataSetQString = QString::fromStdString(dataSet);
     mainWindow.setWindowTitle(dataSetQString);
