@@ -8,8 +8,15 @@ MainWindow::MainWindow(QWidget *parent)
     QFont currentFont = textGroupAmount->font();
     currentFont.setPointSize(20);
     textGroupAmount->setFont(currentFont);
-    textGroupAmount->setGeometry(1100, 10, 250, 50);
+    textGroupAmount->setGeometry(1100, 10, 300, 50);
     textGroupAmount->setEnabled(false);
+
+    textElapsedTime = new QTextEdit(this);
+    textElapsedTime->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    currentFont.setPointSize(15);
+    textElapsedTime->setFont(currentFont);
+    textElapsedTime->setGeometry(1100, 70, 300, 50);
+    textElapsedTime->setEnabled(false);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {
@@ -42,10 +49,12 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     }
 }
 
-void MainWindow::startAlghoritm(std::string dataset, char delimiter, int k) {
+void MainWindow::startAlghoritm(std::string dataset, char delimiter, int k, bool TIEnabled) {
     std::cout<<"name: "<<dataset;
-    NBC nbc(dataset, delimiter, k);
-
+    auto start_time = std::chrono::high_resolution_clock::now();
+    NBC nbc(dataset, delimiter, k, TIEnabled);
+    auto end_time  = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
     points = nbc.getPoints();
     maxLabel = nbc.getGroupIndex();
     minX = nbc.getMinX();
@@ -53,6 +62,8 @@ void MainWindow::startAlghoritm(std::string dataset, char delimiter, int k) {
     maxX = nbc.getMaxX();
     maxY = nbc.getMaxY();
     textGroupAmount->setText("Group amount: " + QString::number(nbc.getGroupIndex()));
+    double truncatedTime = std::floor(duration.count() / 100.0) / 10000.0;
+    textElapsedTime->setText("Elapsed time: " + QString::number(truncatedTime) + " seconds");
 
 }
 

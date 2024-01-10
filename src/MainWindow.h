@@ -6,6 +6,7 @@
 #include <QTextEdit>
 #include <QFont>
 #include <random>
+#include <chrono>
 #include "NBC.h"
 
 class MainWindow : public QWidget
@@ -14,7 +15,7 @@ class MainWindow : public QWidget
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    void startAlghoritm(std::string dataset, char delimiter, int k);
+    void startAlghoritm(std::string dataset, char delimiter, int k, bool TIEnabled);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -25,6 +26,7 @@ private:
     int maxLabel;
     double minX, minY, maxX, maxY;
     QTextEdit *textGroupAmount;
+    QTextEdit *textElapsedTime;
 
 };
 #endif // MAINWINDOW_H

@@ -11,7 +11,7 @@
 class NBC
 {
 public:
-    NBC(std::string path, char delimiter, int k);
+    NBC(std::string path, char delimiter, int k, bool TIEnabled);
     void openDataset(std::string path, char delimiter);
     void printPoints();
     void countDistance();
@@ -20,6 +20,7 @@ public:
     void setIndex();
     void findNeighbors();
     void findNeighborsOfPoint(int point);
+    void findNeighborsWithoutTI();
     void countNdf();
     void putLabelsOn();
     double getDistanceNextPoint(int point);

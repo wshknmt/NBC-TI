@@ -1,14 +1,23 @@
 #include "NBC.h"
 
-NBC::NBC(std::string path, char delimiter, int k) {
+NBC::NBC(std::string path, char delimiter, int k, bool TIEnabled) {
     this->k = k;
     openDataset(path, delimiter);
-    countDistance();
-    sortPoints();
-    setIndex();
-    findNeighbors();
-    countNdf();
-    putLabelsOn();
+    if (TIEnabled) {
+        countDistance();
+        sortPoints();
+        setIndex();
+        findNeighbors();
+        countNdf();
+        putLabelsOn();
+    }
+    else {
+        setIndex();
+        findNeighborsWithoutTI();
+        countNdf();
+        putLabelsOn();
+    }
+
 }
 
 void NBC::openDataset(std::string path, char delimiter) {
@@ -131,6 +140,29 @@ void NBC::findNeighborsOfPoint(int point) {
             n.realDistance = countRealDistanceToPoint(point, n.index);
             points[point].addNeighbor(n);
             points[point].decrementMinChecked();
+        }
+    }
+}
+
+void NBC::findNeighborsWithoutTI() {
+    for (int point = 0; point < points.size(); point++) {
+        for (int j = 0; j < k; j++) {
+            Neighbor n;
+            n.index = -100;
+            n.realDistance = std::numeric_limits<double>::max();
+            points[point].addNeighbor(n);
+        }
+        points[point].countEpsilon();
+        for (int j = 0; j < points.size(); j++) {
+            if (point == j) continue;
+            double realDistance = countRealDistanceToPoint(point, j);
+            if (realDistance < points[point].getEpsilon()) {
+                Neighbor n;
+                n.index = j;
+                n.realDistance = realDistance;
+                points[point].replaceNeighbor(n);
+                points[point].countEpsilon();
+            }
         }
     }
 }
