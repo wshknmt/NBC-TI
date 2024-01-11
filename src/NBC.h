@@ -34,11 +34,15 @@ public:
     double getMinY();
     double getMaxX();
     double getMaxY();
+    double getQualityMeasureDaviesBouldin();
+    double calculateAverageDistanceToCluster(int point, int groupNum);
+    double getQualityMeasureSilhouette();
 private:
     double minX = std::numeric_limits<double>::max();
     double minY = std::numeric_limits<double>::max();
     double maxX = 0;
     double maxY = 0;
+    double NBCthreshold = 0.5;
     std::vector <Point> points;
     std::deque <int> seeds;
     int k;

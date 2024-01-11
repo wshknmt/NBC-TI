@@ -176,10 +176,9 @@ void NBC::countNdf() {
 
 void NBC::putLabelsOn() {
     groupIndex = 0;
-    double minNdf = 0.5;
     for (int i = 0; i < points.size(); i++) {
         if (points[i].getLabel() != 0) continue;
-        if (points[i].getNdf() < minNdf) {
+        if (points[i].getNdf() < NBCthreshold) {
             points[i].setLabel(-1);
             continue;
         }
@@ -192,7 +191,7 @@ void NBC::putLabelsOn() {
                     int neighborIdx = points[seeds[0]].getNeighbor(j).index;
                     if (points[neighborIdx].getLabel() <= 0) {
                         points[neighborIdx].setLabel(groupIndex);
-                        if (points[neighborIdx].getNdf() >= minNdf) {
+                        if (points[neighborIdx].getNdf() >= NBCthreshold) {
                             seeds.push_back(neighborIdx);
                         }
                     }
@@ -248,4 +247,78 @@ double NBC::getMaxX() {
 }
 double NBC::getMaxY() {
     return maxY;
+}
+
+double NBC::getQualityMeasureDaviesBouldin() {
+    std::vector<double> centroidX(groupIndex);
+    std::vector<double> centroidY(groupIndex);
+    std::vector<double> avgDistances(groupIndex);
+    for (int i = 0; i < points.size(); i++) {
+        if (points[i].getLabel() > 0) {
+            centroidX[points[i].getLabel()-1] += points[i].getX();
+            centroidY[points[i].getLabel()-1] += points[i].getY();
+        }
+    }
+    for (int i = 0; i < centroidX.size(); i++) {
+        centroidX[i] = centroidX[i] / points.size();
+        centroidY[i] = centroidY[i] / points.size();
+    }
+
+    for (int i = 0; i < points.size(); i++) {
+        if (points[i].getLabel() > 0) {
+            int curLabel = points[i].getLabel() - 1;
+            avgDistances[curLabel] += distanceOfTwoPoints(points[i].getX(), points[i].getY(), centroidX[curLabel], centroidY[curLabel]);
+        }
+    }
+    for (int i = 0; i < avgDistances.size(); i++) {
+        avgDistances[i] = avgDistances[i] / points.size();
+    }
+
+    double dbQuality = 0.0;
+    for (int i = 0; i < groupIndex; i++) {
+        double maxDbVal = 0.0;
+        for (int j = 0; j < groupIndex; j++) {
+            if (i != j) {
+                double dbVal = (avgDistances[i] + avgDistances[j]) / distanceOfTwoPoints(centroidX[i], centroidY[i], centroidX[j], centroidY[j]);
+                maxDbVal = std::max(maxDbVal, dbVal);
+            }
+        }
+        dbQuality += maxDbVal;
+    }
+    dbQuality /= points.size();
+    return dbQuality;
+}
+
+double NBC::calculateAverageDistanceToCluster(int point, int groupNum) {
+    double sum = 0.0;
+    int counter = 0;
+    for (int i = 0; i < points.size(); i++) {
+        if (groupNum == points[i].getLabel()) {
+            sum += distanceOfTwoPoints(points[point].getX(), points[point].getY(), points[i].getX(), points[i].getY());
+            counter++;
+        }
+    }
+    return sum / counter;
+}
+
+double NBC::getQualityMeasureSilhouette() {
+    double silhouetteQuality = 0.0;
+    for (int groupNum = 0; groupNum < groupIndex; groupNum++) {
+        for (int i = 0; i < points.size(); i++) {
+            if (points[i].getLabel() == groupNum + 1 ) {
+                double a = calculateAverageDistanceToCluster(i, groupNum + 1);
+                double b_min = std::numeric_limits<double>::max();
+
+                for (int groupNum2 = 0; groupNum2 < groupIndex; groupNum2++) {
+                    if (groupNum != groupNum2) {
+                        double b = calculateAverageDistanceToCluster(i, groupNum2 + 1);
+                        b_min = std::min(b_min, b);
+                    }
+                }
+                double s = (b_min - a) / std::max(a, b_min);
+                silhouetteQuality += s;
+                }
+        }
+    }
+    return silhouetteQuality / points.size();
 }

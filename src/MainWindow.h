@@ -27,6 +27,9 @@ private:
     double minX, minY, maxX, maxY;
     QTextEdit *textGroupAmount;
     QTextEdit *textElapsedTime;
+    QTextEdit *textDBQuality;
+    QTextEdit *textSilhouetteQuality;
+
 
 };
 #endif // MAINWINDOW_H

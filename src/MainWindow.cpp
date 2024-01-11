@@ -17,6 +17,20 @@ MainWindow::MainWindow(QWidget *parent)
     textElapsedTime->setFont(currentFont);
     textElapsedTime->setGeometry(1100, 70, 300, 50);
     textElapsedTime->setEnabled(false);
+
+    textDBQuality = new QTextEdit(this);
+    textDBQuality->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    currentFont.setPointSize(20);
+    textDBQuality->setFont(currentFont);
+    textDBQuality->setGeometry(1100, 130, 300, 50);
+    textDBQuality->setEnabled(false);
+
+    textSilhouetteQuality = new QTextEdit(this);
+    textSilhouetteQuality->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    currentFont.setPointSize(15);
+    textSilhouetteQuality->setFont(currentFont);
+    textSilhouetteQuality->setGeometry(1100, 190, 300, 50);
+    textSilhouetteQuality->setEnabled(false);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {
@@ -64,6 +78,10 @@ void MainWindow::startAlghoritm(std::string dataset, char delimiter, int k, bool
     textGroupAmount->setText("Group amount: " + QString::number(nbc.getGroupIndex()));
     double truncatedTime = std::floor(duration.count() / 100.0) / 10000.0;
     textElapsedTime->setText("Elapsed time: " + QString::number(truncatedTime) + " seconds");
+    double dqQuality = nbc.getQualityMeasureDaviesBouldin();
+    textDBQuality->setText("DB Index: " + QString::number(dqQuality));
+    double silhouetteQuality = nbc.getQualityMeasureSilhouette();
+    textSilhouetteQuality->setText("Silhouette Index: " + QString::number(silhouetteQuality));
 
 }
 

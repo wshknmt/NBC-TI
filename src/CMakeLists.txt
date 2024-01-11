@@ -1,6 +1,8 @@
 add_executable(${PROJECT_NAME}
   MainWindow.h
   MainWindow.cpp
+  StartWindow.h
+  StartWindow.cpp
   NBC.h
   NBC.cpp
   Point.h
