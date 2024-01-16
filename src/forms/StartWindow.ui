@@ -88,7 +88,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Min. neighbours amount:</string>
+     <string>Min. neighbors amount:</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

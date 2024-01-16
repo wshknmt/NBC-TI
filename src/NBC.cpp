@@ -26,7 +26,6 @@ void NBC::openDataset(std::string path, char delimiter) {
         std::string line;
 
         while (getline(file, line)) {
-            std::cout << line << std::endl;
             std::istringstream issLine(line);
             std::string x, y;
             std::getline(issLine, x, delimiter);
@@ -77,6 +76,7 @@ void NBC::findNeighbors() {
     for (int i = 0; i < points.size(); i++) {
         findNeighborsOfPoint(i);
         points[i].countEpsilon();
+
         while (points[i].getMinChecked() - 1 >= 0) {
             double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMinChecked() - 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {
@@ -97,6 +97,7 @@ void NBC::findNeighbors() {
                 break;
             }
         }
+
         while (points[i].getMaxChecked() + 1 < points.size()) {
             double estimatedDist = fabs(points[i].getDistance() - points[points[i].getMaxChecked() + 1].getDistance());
             if (estimatedDist < points[i].getEpsilon()) {

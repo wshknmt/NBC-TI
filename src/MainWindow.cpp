@@ -64,7 +64,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 }
 
 void MainWindow::startAlghoritm(std::string dataset, char delimiter, int k, bool TIEnabled) {
-    std::cout<<"name: "<<dataset;
     auto start_time = std::chrono::high_resolution_clock::now();
     NBC nbc(dataset, delimiter, k, TIEnabled);
     auto end_time  = std::chrono::high_resolution_clock::now();
