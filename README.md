@@ -6,6 +6,7 @@ Program został napisany w języku C++. Interfejs graficzny stworzony przy użyc
 W momencie uruchomienia programu zostanie wyświetlone okno w którym należy zdefiniować parametry algorytmu grupowania.
 
 ![okno_start](./docs/pictures/okno_start.png)
+
 Na oknie użytkownik może wybrać jeden ze zdefiniowanych wcześniej datasetów albo do folderu data może umieścić własny dataset który po uruchomieniu programu będzie widoczny na liście. Dataset powinien mieć następujący format: „X,Y,” czyli dwie współrzędne rozdzielone przecinkami. Liczba wierszy może być dowolna jednak nie mniejsza od minimalnej liczby sąsiadów. Oprócz tego należy zdefiniować właśnie minimalną liczbę sąsiadów którzy będą szukani dla każdego punktu. A także można zdecydować czy algorytm ma wykorzystywać nierówność trójkąta czy nie.
 Po wybraniu datasetu „zelnik4.txt”, 50 sąsiadów i zaznaczonego checkboxa TI widać następujący rezultat.
 ![okno_wynik](./docs/pictures/okno_wynik.png)
