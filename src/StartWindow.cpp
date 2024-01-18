@@ -6,7 +6,7 @@ StartWindow::StartWindow(QWidget *parent)
     , ui(new Ui::StartWindow)
 {
     ui->setupUi(this);
-    QString directoryPath = "C:\\Users\\pawel\\Desktop\\medVSCODE 3\\MED\\data\\";
+    QString directoryPath = "C:\\Users\\pawel\\Desktop\\MED\\data\\";
     QDir directory(directoryPath);
     QStringList fileList = directory.entryList(QDir::Files);
     ui->filesList->addItems(fileList);
@@ -38,7 +38,7 @@ void StartWindow::on_startButton_clicked() {
     const int windowHeight = 900;
     MainWindow* mainWindow = new MainWindow;
     std::string dataSet = selectedFileName.toStdString();
-    std::string path = "C:\\Users\\pawel\\Desktop\\medVSCODE 3\\MED\\data\\";
+    std::string path = "C:\\Users\\pawel\\Desktop\\MED\\data\\";
     bool TIEnabled = ui->checkBoxTI->isChecked();
 
     mainWindow->startAlghoritm(path + dataSet, ',', k, TIEnabled);
